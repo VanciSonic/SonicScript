@@ -90,7 +90,7 @@ function MechaUI:CreateWindow(title)
 
     create("UIStroke",{
         Thickness = 1.5,
-        Color = Color3.fromRGB(0,170,255),
+        Color = Color3.fromRGB(255,0,0),
         Parent = main
     })
 
@@ -183,7 +183,7 @@ function MechaUI:CreateWindow(title)
             Text = "JOIN",
             Font = Enum.Font.GothamBold,
             TextSize = 13,
-            BackgroundColor3 = Color3.fromRGB(0,170,255),
+            BackgroundColor3 = Color3.fromRGB(255,0,0),
             TextColor3 = Color3.new(1,1,1),
             Size = UDim2.new(0,80,0,28),
             Position = UDim2.new(1,-92,0.5,-14),
