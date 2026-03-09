@@ -1,9 +1,10 @@
 -- Mecha UI Library (Roblox)
--- modern dark/mecha style with UICorner + UIStroke
+-- modern dark/mecha style with UICorner + UIStroke + draggable window
 
 local MechaUI = {}
 
 local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 local PlayerGui = player:WaitForChild("PlayerGui")
 
@@ -13,6 +14,46 @@ local function create(class, props)
         obj[k] = v
     end
     return obj
+end
+
+local function makeDraggable(frame, dragArea)
+    local dragging = false
+    local dragInput
+    local start
+    local startPos
+
+    dragArea.InputBegan:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            start = input.Position
+            startPos = frame.Position
+
+            input.Changed:Connect(function()
+                if input.UserInputState == Enum.UserInputState.End then
+                    dragging = false
+                end
+            end)
+        end
+    end)
+
+    dragArea.InputChanged:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseMovement then
+            dragInput = input
+        end
+    end)
+
+    UIS.InputChanged:Connect(function(input)
+        if input == dragInput and dragging then
+            local delta = input.Position - start
+
+            frame.Position = UDim2.new(
+                startPos.X.Scale,
+                startPos.X.Offset + delta.X,
+                startPos.Y.Scale,
+                startPos.Y.Offset + delta.Y
+            )
+        end
+    end)
 end
 
 function MechaUI:CreateWindow(title)
@@ -75,6 +116,9 @@ function MechaUI:CreateWindow(title)
         Parent = container
     })
 
+    -- enable dragging via top bar
+    makeDraggable(main, top)
+
     local Window = {}
 
     function Window:AddServer(name,players,max,callback)
@@ -97,7 +141,7 @@ function MechaUI:CreateWindow(title)
         })
 
         local label = create("TextLabel",{
-            Text = name.." | "..players.."/"..max,
+            Text = name.." | "..players.." / "..max,
             Font = Enum.Font.Gotham,
             TextSize = 14,
             BackgroundTransparency = 1,
