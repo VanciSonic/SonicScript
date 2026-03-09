@@ -1,0 +1,139 @@
+-- Mecha UI Library (Roblox)
+-- modern dark/mecha style with UICorner + UIStroke
+
+local MechaUI = {}
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local PlayerGui = player:WaitForChild("PlayerGui")
+
+local function create(class, props)
+    local obj = Instance.new(class)
+    for k,v in pairs(props) do
+        obj[k] = v
+    end
+    return obj
+end
+
+function MechaUI:CreateWindow(title)
+
+    local gui = create("ScreenGui",{
+        Name = "MechaUI",
+        ResetOnSpawn = false,
+        Parent = PlayerGui
+    })
+
+    local main = create("Frame",{
+        Size = UDim2.new(0,420,0,320),
+        Position = UDim2.new(0.5,-210,0.5,-160),
+        BackgroundColor3 = Color3.fromRGB(18,18,22),
+        Parent = gui
+    })
+
+    create("UICorner",{
+        CornerRadius = UDim.new(0,10),
+        Parent = main
+    })
+
+    create("UIStroke",{
+        Thickness = 1.5,
+        Color = Color3.fromRGB(0,170,255),
+        Parent = main
+    })
+
+    local top = create("Frame",{
+        Size = UDim2.new(1,0,0,36),
+        BackgroundColor3 = Color3.fromRGB(25,25,30),
+        Parent = main
+    })
+
+    create("UICorner",{
+        CornerRadius = UDim.new(0,10),
+        Parent = top
+    })
+
+    local titleLabel = create("TextLabel",{
+        Text = title or "Mecha UI",
+        Font = Enum.Font.GothamBold,
+        TextSize = 16,
+        BackgroundTransparency = 1,
+        TextColor3 = Color3.fromRGB(220,220,220),
+        Size = UDim2.new(1,-20,1,0),
+        Position = UDim2.new(0,10,0,0),
+        Parent = top
+    })
+
+    local container = create("Frame",{
+        Size = UDim2.new(1,-20,1,-56),
+        Position = UDim2.new(0,10,0,46),
+        BackgroundTransparency = 1,
+        Parent = main
+    })
+
+    local layout = create("UIListLayout",{
+        Padding = UDim.new(0,8),
+        Parent = container
+    })
+
+    local Window = {}
+
+    function Window:AddServer(name,players,max,callback)
+
+        local item = create("Frame",{
+            Size = UDim2.new(1,0,0,48),
+            BackgroundColor3 = Color3.fromRGB(28,28,35),
+            Parent = container
+        })
+
+        create("UICorner",{
+            CornerRadius = UDim.new(0,8),
+            Parent = item
+        })
+
+        create("UIStroke",{
+            Thickness = 1,
+            Color = Color3.fromRGB(60,60,70),
+            Parent = item
+        })
+
+        local label = create("TextLabel",{
+            Text = name.." | "..players.."/"..max,
+            Font = Enum.Font.Gotham,
+            TextSize = 14,
+            BackgroundTransparency = 1,
+            TextColor3 = Color3.fromRGB(210,210,210),
+            Size = UDim2.new(0.65,0,1,0),
+            Position = UDim2.new(0,12,0,0),
+            TextXAlignment = Enum.TextXAlignment.Left,
+            Parent = item
+        })
+
+        local join = create("TextButton",{
+            Text = "JOIN",
+            Font = Enum.Font.GothamBold,
+            TextSize = 13,
+            BackgroundColor3 = Color3.fromRGB(0,170,255),
+            TextColor3 = Color3.new(1,1,1),
+            Size = UDim2.new(0,80,0,28),
+            Position = UDim2.new(1,-92,0.5,-14),
+            Parent = item
+        })
+
+        create("UICorner",{
+            CornerRadius = UDim.new(0,6),
+            Parent = join
+        })
+
+        join.MouseButton1Click:Connect(function()
+            if callback then
+                callback()
+            end
+        end)
+
+        return item
+    end
+
+    return Window
+end
+
+return MechaUI
