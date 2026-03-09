@@ -1,5 +1,4 @@
 -- Mecha UI Library (Roblox)
--- modern dark/mecha style with UICorner + UIStroke + draggable window
 
 local MechaUI = {}
 
@@ -17,13 +16,16 @@ local function create(class, props)
 end
 
 local function makeDraggable(frame, dragArea)
+
     local dragging = false
     local dragInput
     local start
     local startPos
 
     dragArea.InputBegan:Connect(function(input)
+
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
+
             dragging = true
             start = input.Position
             startPos = frame.Position
@@ -33,17 +35,23 @@ local function makeDraggable(frame, dragArea)
                     dragging = false
                 end
             end)
+
         end
+
     end)
 
     dragArea.InputChanged:Connect(function(input)
+
         if input.UserInputType == Enum.UserInputType.MouseMovement then
             dragInput = input
         end
+
     end)
 
     UIS.InputChanged:Connect(function(input)
+
         if input == dragInput and dragging then
+
             local delta = input.Position - start
 
             frame.Position = UDim2.new(
@@ -52,9 +60,13 @@ local function makeDraggable(frame, dragArea)
                 startPos.Y.Scale,
                 startPos.Y.Offset + delta.Y
             )
+
         end
+
     end)
+
 end
+
 
 function MechaUI:CreateWindow(title)
 
@@ -104,10 +116,14 @@ function MechaUI:CreateWindow(title)
         Parent = top
     })
 
-    local container = create("Frame",{
+    -- SCROLL CONTAINER
+    local container = create("ScrollingFrame",{
         Size = UDim2.new(1,-20,1,-56),
         Position = UDim2.new(0,10,0,46),
         BackgroundTransparency = 1,
+        BorderSizePixel = 0,
+        ScrollBarThickness = 6,
+        CanvasSize = UDim2.new(0,0,0,0),
         Parent = main
     })
 
@@ -116,7 +132,18 @@ function MechaUI:CreateWindow(title)
         Parent = container
     })
 
-    -- enable dragging via top bar
+    -- AUTO UPDATE CANVAS SIZE
+    layout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+
+        container.CanvasSize = UDim2.new(
+            0,
+            0,
+            0,
+            layout.AbsoluteContentSize.Y + 10
+        )
+
+    end)
+
     makeDraggable(main, top)
 
     local Window = {}
@@ -169,15 +196,18 @@ function MechaUI:CreateWindow(title)
         })
 
         join.MouseButton1Click:Connect(function()
+
             if callback then
                 callback()
             end
+
         end)
 
         return item
     end
 
     return Window
+
 end
 
 return MechaUI
